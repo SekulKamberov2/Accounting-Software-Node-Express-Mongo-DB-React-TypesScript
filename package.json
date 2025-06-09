@@ -1,0 +1,25 @@
+{
+  "name": "accounting-software-node-express-mongo-db-react-typesscript",
+  "version": "1.0.0",
+  "description": "Accounting Software Node Express Mongo DB React TypesScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SekulKamberov2/Accounting-Software-Node-Express-Mongo-DB-React-TypesScript.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SekulKamberov2/Accounting-Software-Node-Express-Mongo-DB-React-TypesScript/issues"
+  },
+  "homepage": "https://github.com/SekulKamberov2/Accounting-Software-Node-Express-Mongo-DB-React-TypesScript#readme",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mssql": "^11.0.1"
+  }
+}
