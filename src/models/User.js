@@ -1,6 +1,6 @@
 const sql = require('mssql');
 const bcrypt = require('bcrypt');
-const { config } = require('../config');  // Import config from your config module
+const { config } = require('../config');  
 
 async function findByEmail(email) {
   try {
@@ -62,5 +62,35 @@ async function updateRefreshToken(userId, token, expiry) {
     `);
 };
 
+async function fetchAllUsers() {
+  const pool = await sql.connect(config);
+  const result = await pool.request().query(`
+    SELECT Id, Name, Email, Role, CreatedAt
+    FROM Users
+  `);
+  return result.recordset;
+}; 
+
+async function fetchUserById(userId) {
+  const pool = await sql.connect(config);
+  const result = await pool
+    .request()
+    .input('id', sql.Int, userId)
+    .query(`
+      SELECT Id, Name, Email, Role, CreatedAt, RefreshToken, RefreshTokenExpiry, PasswordHash
+      FROM Users
+      WHERE Id = @id
+    `); 
+  return result.recordset[0] || null;
+};
  
-module.exports = { findByEmail, comparePassword, createUser, findUserByRefreshToken, updateRefreshToken  };
+
+module.exports = { 
+    findByEmail, 
+    comparePassword, 
+    createUser, 
+    findUserByRefreshToken, 
+    updateRefreshToken, 
+    fetchAllUsers,
+    fetchUserById   
+};
