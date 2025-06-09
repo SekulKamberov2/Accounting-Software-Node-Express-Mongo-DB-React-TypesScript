@@ -38,5 +38,29 @@ async function createUser({ name, email, passwordHash, role }) {
     `);
   pool.close();
 }
+async function findUserByRefreshToken(token) {
+  const pool = await sql.connect(config);
+  const result = await pool
+    .request()
+    .input('token', sql.NVarChar, token)
+    .query('SELECT * FROM Users WHERE RefreshToken = @token');
+
+  return result.recordset[0];
+};
+
+async function updateRefreshToken(userId, token, expiry) {
+  const pool = await sql.connect(config);
+  await pool
+    .request()
+    .input('id', sql.Int, userId)
+    .input('token', sql.NVarChar, token)
+    .input('expiry', sql.DateTime, expiry)
+    .query(`
+      UPDATE Users
+      SET RefreshToken = @token, RefreshTokenExpiry = @expiry
+      WHERE Id = @id
+    `);
+};
+
  
-module.exports = { findByEmail, comparePassword, createUser };
+module.exports = { findByEmail, comparePassword, createUser, findUserByRefreshToken, updateRefreshToken  };
