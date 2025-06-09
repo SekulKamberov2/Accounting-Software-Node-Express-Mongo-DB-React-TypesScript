@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: './.env' }); 
 
 const config = {
   user: process.env.DB_USER,
@@ -14,6 +14,10 @@ const config = {
 
 const appConfig = {
   port: parseInt(process.env.PORT, 10) || 3000
-};
+}; 
+console.log("DB_USER:", process.env.DB_USER);
+console.log("DB_PASSWORD:", process.env.DB_PASSWORD);
+console.log("DB_SERVER:", process.env.DB_SERVER);
+console.log("DB_PORT:", process.env.DB_PORT);
 
 module.exports = { config, appConfig };
