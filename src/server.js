@@ -11,6 +11,8 @@ const accountRoutes = require('./routes/accounts');
 const journalEntryRoutes = require('./routes/journalEntries');
 const reportRoutes = require('./routes/reports'); 
 const expenseRoutes = require('./routes/expenses');
+const vendorRoutes = require('./routes/vendors');
+
 
 const app = express(); 
 app.use(express.json());
@@ -24,6 +26,7 @@ app.use('/api/accounts', accountRoutes);
 app.use('/api/journal-entries', journalEntryRoutes);
 app.use('/api/reports', reportRoutes); 
 app.use('/api/expenses', expenseRoutes);
+app.use('/api/vendors', vendorRoutes);
 
 app.listen(appConfig.port, () => {
   console.log(`Server running at http://localhost:${appConfig.port}`);
