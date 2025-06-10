@@ -1,4 +1,4 @@
-const { fetchProfitAndLoss } = require('../models/report');
+const { fetchProfitAndLoss, fetchBalanceSheet } = require('../models/report');
 
 exports.getProfitAndLossReport = async (req, res) => {
   try {
@@ -13,6 +13,21 @@ exports.getProfitAndLossReport = async (req, res) => {
     res.json(report);
   } catch (error) {
     console.error('Error generating Profit and Loss report:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+exports.getBalanceSheet = async (req, res) => {
+  const { date } = req.query;
+  if (!date || isNaN(Date.parse(date))) {
+    return res.status(400).json({ message: 'Invalid or missing date parameter' });
+  }
+
+  try {
+    const report = await fetchBalanceSheet(date);
+    res.json(report);
+  } catch (error) {
+    console.error('Error fetching balance sheet:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };

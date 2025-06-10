@@ -9,7 +9,7 @@ const invoiceRoutes = require('./routes/invoices');
 const paymentRoutes = require('./routes/payments');
 const accountRoutes = require('./routes/accounts');
 const journalEntryRoutes = require('./routes/journalEntries');
-const reportRoutes = require('./routes/reports');
+const reportRoutes = require('./routes/reports'); 
 
 const app = express(); 
 app.use(express.json());
@@ -21,7 +21,7 @@ app.use('/api/invoices', invoiceRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/accounts', accountRoutes);
 app.use('/api/journal-entries', journalEntryRoutes);
-app.use('/api/reports', reportRoutes);
+app.use('/api/reports', reportRoutes); 
 
 app.listen(appConfig.port, () => {
   console.log(`Server running at http://localhost:${appConfig.port}`);

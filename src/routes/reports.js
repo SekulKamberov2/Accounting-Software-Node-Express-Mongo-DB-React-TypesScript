@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { getProfitAndLossReport } = require('../controllers/reportController');
+const { getProfitAndLossReport, getBalanceSheet } = require('../controllers/reportController');
 
 router.get('/profit-loss', getProfitAndLossReport);
+router.get('/balance-sheet', getBalanceSheet);
 
 module.exports = router;

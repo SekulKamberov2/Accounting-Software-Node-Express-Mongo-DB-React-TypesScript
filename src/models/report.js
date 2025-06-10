@@ -37,6 +37,62 @@ async function fetchProfitAndLoss(startDate, endDate) {
   };
 }
 
+async function fetchBalanceSheet(date) {
+  const pool = await sql.connect(config);
+   
+  const query = `
+    SELECT 
+      a.Id, a.Name, a.Type, a.Code,
+      SUM(CASE WHEN jue.Credit > 0 THEN jue.Credit ELSE 0 END) as TotalCredits,
+      SUM(CASE WHEN jue.Debit > 0 THEN jue.Debit ELSE 0 END) as TotalDebits
+    FROM Accounts a
+    LEFT JOIN JournalEntryLines jue ON a.Id = jue.AccountId
+    LEFT JOIN JournalEntries je ON jue.JournalEntryId = je.Id
+    WHERE je.Date <= @date -- only up to the specified date
+    GROUP BY a.Id, a.Name, a.Type, a.Code
+  `;
+  
+  const result = await pool.request()
+    .input('date', sql.Date, date)
+    .query(query);
+  
+  pool.close();
+ 
+  const accounts = result.recordset.map(acc => {
+    let balance = 0;
+    switch (acc.Type.toLowerCase()) {
+      case 'asset':
+      case 'expense':
+        balance = acc.TotalDebits - acc.TotalCredits;
+        break;
+      case 'liability':
+      case 'revenue':
+      case 'equity':
+        balance = acc.TotalCredits - acc.TotalDebits;
+        break;
+      default:
+        balance = 0;
+    }
+
+    return {
+      id: acc.Id,
+      name: acc.Name,
+      type: acc.Type,
+      code: acc.Code,
+      balance: balance
+    };
+  });
+ 
+  const summary = {
+    assets: accounts.filter(a => a.type.toLowerCase() === 'asset'),
+    liabilities: accounts.filter(a => a.type.toLowerCase() === 'liability'),
+    equity: accounts.filter(a => a.type.toLowerCase() === 'equity')
+  };
+
+  return summary;
+}
+
 module.exports = {
-  fetchProfitAndLoss
+  fetchProfitAndLoss,
+  fetchBalanceSheet
 };
