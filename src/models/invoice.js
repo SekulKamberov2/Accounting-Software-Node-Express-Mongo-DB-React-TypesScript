@@ -116,3 +116,74 @@ exports.getInvoiceById = async (invoiceId) => {
     throw error;
   }
 };
+
+exports.updateInvoiceById = async (invoiceId, { customer_id, date, tax_rate, items }) => {
+  const pool = await sql.connect(config);
+  const transaction = new sql.Transaction(pool);
+
+  try {
+    await transaction.begin();
+ 
+    await transaction.request()
+      .input('InvoiceId', sql.Int, invoiceId)
+      .input('CustomerId', sql.Int, customer_id)
+      .input('Date', sql.Date, date)
+      .input('TaxRate', sql.Float, tax_rate)
+      .query(`
+        UPDATE Invoices
+        SET CustomerId = @CustomerId,
+            Date = @Date,
+            TaxRate = @TaxRate
+        WHERE Id = @InvoiceId
+      `);
+ 
+    await transaction.request()
+      .input('InvoiceId', sql.Int, invoiceId)
+      .query('DELETE FROM InvoiceItems WHERE InvoiceId = @InvoiceId');
+ 
+    for (const item of items) {
+      await transaction.request()
+        .input('InvoiceId', sql.Int, invoiceId)
+        .input('Description', sql.NVarChar, item.description)
+        .input('Quantity', sql.Int, item.quantity)
+        .input('UnitPrice', sql.Float, item.unit_price)
+        .query(`
+          INSERT INTO InvoiceItems (InvoiceId, Description, Quantity, UnitPrice)
+          VALUES (@InvoiceId, @Description, @Quantity, @UnitPrice)
+        `);
+    }
+
+    await transaction.commit();
+  } catch (error) {
+    await transaction.rollback();
+    console.error('updateInvoiceById error:', error);
+    throw error;
+  }
+};
+
+exports.deleteInvoiceById = async (id) => {
+  const pool = await poolPromise; 
+  const invoiceResult = await pool.request()
+    .input('id', sql.Int, id)
+    .query('SELECT Id FROM Invoices WHERE Id = @id');
+
+  if (invoiceResult.recordset.length === 0) {
+    return false; 
+  }
+ 
+  const transaction = new sql.Transaction(pool);
+  await transaction.begin();
+
+  try {
+    const request = new sql.Request(transaction); 
+    await request.input('id', sql.Int, id)
+      .query('DELETE FROM Invoices WHERE Id = @id');
+
+    await transaction.commit();
+
+    return true;
+  } catch (err) {
+    await transaction.rollback();
+    throw err;
+  }
+}
