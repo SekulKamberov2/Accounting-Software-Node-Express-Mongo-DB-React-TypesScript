@@ -1,4 +1,4 @@
-const { createJournalEntry } = require('../models/journalEntry');
+const { createJournalEntry, getAllJournalEntries  } = require('../models/journalEntry');
 
 exports.createEntry = async (req, res) => {
   try {
@@ -19,3 +19,14 @@ exports.createEntry = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+exports.listEntries = async (req, res) => {
+  try {
+    const entries = await getAllJournalEntries();
+    res.json(entries);
+  } catch (error) {
+    console.error('List journal entries error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+

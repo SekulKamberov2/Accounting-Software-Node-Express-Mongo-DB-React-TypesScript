@@ -38,3 +38,46 @@ exports.createJournalEntry = async ({ date, description, entries }) => {
     throw err;
   }
 };
+
+exports.getAllJournalEntries = async () => {
+    const pool = await sql.connect(config);
+    const result = await pool.request().query(`
+    SELECT 
+        je.Id AS JournalEntryId,
+        je.Date,
+        je.Description,
+        je.CreatedAt,
+        jel.Id AS LineId,
+        jel.AccountId,
+        a.Name AS AccountName,
+        jel.Debit,
+        jel.Credit
+    FROM JournalEntries je
+    LEFT JOIN JournalEntryLines jel ON je.Id = jel.JournalEntryId
+    LEFT JOIN Accounts a ON a.Id = jel.AccountId
+    ORDER BY je.Date DESC, je.Id, jel.Id
+    `);
+
+    const grouped = {};
+    result.recordset.forEach(row => {
+    if (!grouped[row.JournalEntryId]) {
+        grouped[row.JournalEntryId] = {
+        id: row.JournalEntryId,
+        date: row.Date,
+        description: row.Description,
+        createdAt: row.CreatedAt,
+        lines: []
+        };
+    }
+
+    grouped[row.JournalEntryId].lines.push({
+        id: row.LineId,
+        accountId: row.AccountId,
+        accountName: row.AccountName,
+        debit: row.Debit,
+        credit: row.Credit
+    });
+    });
+
+    return Object.values(grouped);
+};
