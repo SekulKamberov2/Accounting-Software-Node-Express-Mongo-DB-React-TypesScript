@@ -7,6 +7,8 @@ const usersRouter = require('./routes/users');
 const recurringInvoiceRoutes = require('./routes/recurringInvoices');
 const invoiceRoutes = require('./routes/invoices');
 const paymentRoutes = require('./routes/payments');
+const accountRoutes = require('./routes/accounts');
+
 
 const app = express(); 
 app.use(express.json());
@@ -16,7 +18,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/recurring-invoices', recurringInvoiceRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/payments', paymentRoutes);
-
+app.use('/api/accounts', accountRoutes);
 
 
 app.listen(appConfig.port, () => {
