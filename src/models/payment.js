@@ -14,3 +14,13 @@ exports.recordPayment = async ({ invoice_id, amount, date, method }) => {
       VALUES (@InvoiceId, @Amount, @Date, @Method)
     `);
 };
+
+exports.getAllPayments = async () => {
+  const pool = await sql.connect(config);
+  const result = await pool.request().query(`
+    SELECT Id, InvoiceId, Amount, Date, Method
+    FROM Payments
+    ORDER BY Date DESC
+  `);
+  return result.recordset;
+};
