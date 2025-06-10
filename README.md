@@ -302,3 +302,53 @@ VALUES
 (8, 'Annual Maintenance', 1, 1300.00),
 (9, 'Monthly Consulting', 9, 115.00);
 
+# Contents:
+
+1.Authentication
+2.User Management
+3.Invoicing
+4.Payments
+5.Chart of Accounts
+6.Journal Entries
+7.Financial Reports
+8.Expenses
+9.Vendors
+10.Bank Transactions
+11.Tax Management 
+
+## Routes:
+1. POST /api/auth/login
+2. POST /api/auth/register
+3. POST /api/auth/refresh
+4. GET /api/users
+5. GET /api/users/:id
+6. POST /api/invoices
+7. GET /api/invoices
+8. GET /api/invoices/:id 
+9. PUT /api/invoices/:id
+10. DELETE /api/invoices/:id
+11. POST /api/payments
+12. GET /api/payments
+13. GET /api/accounts
+14. POST /api/accounts
+15. POST /api/journal-entries
+16. GET /api/journal-entries
+17. GET /api/reports/profit-loss?start_date=2025-01-01&end_date=2025-06-09
+18. GET /api/reports/balance-sheet?date=2025-06-09
+19. POST /api/expenses
+20. GET /api/expenses?start=2025-01-01&end=2025-06-09
+21. GET /api/vendors
+22. POST /api/vendors
+23. POST /api/bank-transactions/import
+24. GET /api/bank-transactions
+25. POST /api/taxes
+26. GET /api/taxes
+27. POST /api/recurring-invoices
+{
+  "customer_id": 1,
+  "interval": "monthly",
+  "start_date": "2025-06-01",
+  "items": [
+    { "description": "Hosting Subscription", "quantity": 1, "unit_price": 50 }
+  ]
+}
