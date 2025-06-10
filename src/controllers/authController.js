@@ -45,7 +45,8 @@ const { findByEmail, comparePassword, createUser, findUserByRefreshToken, update
         id: user.Id,
         name: user.Name,
         email: user.Email,
-        role: user.Role
+        role: user.Role,
+        createdAt: user.createdAt
       }
     });
   } catch (error) {

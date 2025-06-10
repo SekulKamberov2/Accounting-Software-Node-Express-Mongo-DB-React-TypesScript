@@ -17,7 +17,8 @@ const path = require('path');
 const fileUpload = require('express-fileupload');
 const bankTransactionRoutes = require('./routes/bankTransactions');
 const taxRoutes = require('./routes/taxes');
-  
+const cors = require('cors');
+
 const app = express(); 
 
 app.use(cors()); 
