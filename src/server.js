@@ -14,6 +14,7 @@ const journalEntryRoutes = require('./routes/journalEntries');
 const reportRoutes = require('./routes/reports'); 
 const expenseRoutes = require('./routes/expenses');
 const vendorRoutes = require('./routes/vendors');
+const bankTransactionRoutes = require('./routes/bankTransactions');
 
 const fileUpload = require('express-fileupload');
 const path = require('path');
@@ -31,6 +32,7 @@ app.use('/api/journal-entries', journalEntryRoutes);
 app.use('/api/reports', reportRoutes); 
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/vendors', vendorRoutes);
+app.use('/api/bank-transactions', bankTransactionRoutes);
 
 app.use(fileUpload()); //enable file uploads
 

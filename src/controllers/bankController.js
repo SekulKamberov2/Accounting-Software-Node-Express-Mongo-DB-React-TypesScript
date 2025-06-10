@@ -1,4 +1,4 @@
-const { createBankTransaction, importFromCSV } = require('../models/bankTransaction');
+const { createBankTransaction, importFromCSV, getBankTransactions, getBankTransactionById  } = require('../models/bankTransaction');
 const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
@@ -58,5 +58,74 @@ exports.importBankTransactions = async (req, res) => {
       message: 'Internal server error',
       error: error.message 
     });
+  }
+};
+
+exports.getBankTransactions = async (req, res) => {
+  try { 
+    const filters = {
+      accountId: req.query.account_id ? parseInt(req.query.account_id, 10) : undefined,
+      startDate: req.query.start_date,
+      endDate: req.query.end_date,
+      minAmount: req.query.min_amount ? parseFloat(req.query.min_amount) : undefined,
+      maxAmount: req.query.max_amount ? parseFloat(req.query.max_amount) : undefined,
+      search: req.query.search
+    };
+ 
+    if (filters.accountId && isNaN(filters.accountId)) {
+      return res.status(400).json({ message: 'Invalid account_id' });
+    }
+ 
+    if (filters.startDate && isNaN(new Date(filters.startDate).getTime())) {
+      return res.status(400).json({ message: 'Invalid start_date format (use YYYY-MM-DD)' });
+    }
+
+    if (filters.endDate && isNaN(new Date(filters.endDate).getTime())) {
+      return res.status(400).json({ message: 'Invalid end_date format (use YYYY-MM-DD)' });
+    }
+ 
+    if (filters.minAmount && isNaN(filters.minAmount)) {
+      return res.status(400).json({ message: 'Invalid min_amount' });
+    }
+
+    if (filters.maxAmount && isNaN(filters.maxAmount)) {
+      return res.status(400).json({ message: 'Invalid max_amount' });
+    }
+ 
+    const transactions = await getBankTransactions(filters);
+
+    res.json({
+      success: true,
+      count: transactions.length,
+      data: transactions
+    });
+  } catch (error) {
+    console.error('Get bank transactions error:', error);
+    res.status(500).json({ 
+      message: 'Internal server error',
+      error: error.message 
+    });
+  }
+};
+
+exports.getBankTransaction = async (req, res) => {
+  try {
+    const transactionId = parseInt(req.params.id, 10);
+    if (isNaN(transactionId)) {
+      return res.status(400).json({ message: 'Invalid transaction ID' });
+    }
+
+    const transaction = await getBankTransactionById(transactionId);
+    if (!transaction) {
+      return res.status(404).json({ message: 'Transaction not found' });
+    }
+
+    res.json({
+      success: true,
+      data: transaction
+    });
+  } catch (error) {
+    console.error('Get bank transaction error:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };

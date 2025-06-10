@@ -80,4 +80,93 @@ async function importFromCSV(filePath, accountId) {
   });
 }
 
-module.exports = { createBankTransaction, importFromCSV };
+async function getBankTransactions({ accountId, startDate, endDate, minAmount, maxAmount, search } = {}) {
+  try {
+    const pool = await sql.connect(config);
+    
+    let query = `
+      SELECT 
+        bt.Id,
+        bt.Date,
+        bt.Description,
+        bt.Amount,
+        bt.AccountId,
+        a.Name AS AccountName,
+        a.Code AS AccountCode
+      FROM BankTransactions bt
+      JOIN Accounts a ON bt.AccountId = a.Id
+      WHERE 1=1
+    `;
+
+    const request = pool.request();
+
+    if (accountId) {
+      query += ' AND bt.AccountId = @accountId';
+      request.input('accountId', sql.Int, accountId);
+    }
+
+    if (startDate) {
+      query += ' AND bt.Date >= @startDate';
+      request.input('startDate', sql.Date, startDate);
+    }
+
+    if (endDate) {
+      query += ' AND bt.Date <= @endDate';
+      request.input('endDate', sql.Date, endDate);
+    }
+
+    if (minAmount) {
+      query += ' AND bt.Amount >= @minAmount';
+      request.input('minAmount', sql.Float, minAmount);
+    }
+
+    if (maxAmount) {
+      query += ' AND bt.Amount <= @maxAmount';
+      request.input('maxAmount', sql.Float, maxAmount);
+    }
+
+    if (search) {
+      query += ' AND bt.Description LIKE @search';
+      request.input('search', sql.NVarChar, `%${search}%`);
+    }
+
+    query += ' ORDER BY bt.Date DESC, bt.Id DESC';
+
+    const result = await request.query(query);
+    pool.close();
+    
+    return result.recordset;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getBankTransactionById(id) {
+  try {
+    const pool = await sql.connect(config);
+    
+    const result = await pool.request()
+      .input('id', sql.Int, id)
+      .query(`
+        SELECT 
+          bt.Id,
+          bt.Date,
+          bt.Description,
+          bt.Amount,
+          bt.AccountId,
+          a.Name AS AccountName,
+          a.Code AS AccountCode
+        FROM BankTransactions bt
+        JOIN Accounts a ON bt.AccountId = a.Id
+        WHERE bt.Id = @id
+      `);
+    
+    pool.close();
+    
+    return result.recordset[0] || null;
+  } catch (error) {
+    throw error;
+  }
+}
+
+module.exports = { createBankTransaction, importFromCSV, getBankTransactions, getBankTransactionById };
