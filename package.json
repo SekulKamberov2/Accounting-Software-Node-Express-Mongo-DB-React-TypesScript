@@ -23,6 +23,9 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mssql": "^11.0.1"
+    "mssql": "^11.0.1",
+    "csv-parser": "^3.0.0",
+    "express-fileupload": "^1.4.0",
+    "uuid": "^9.0.0"
   }
 }
