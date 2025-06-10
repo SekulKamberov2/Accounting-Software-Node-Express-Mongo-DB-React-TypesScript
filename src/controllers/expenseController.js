@@ -1,4 +1,4 @@
-const { createExpense, getExpenseById } = require('../models/expense');
+const { createExpense, getExpenseById, getExpensesByDateRange } = require('../models/expense');
 
 exports.createExpense = async (req, res) => {
   try {
@@ -47,5 +47,43 @@ exports.getExpense = async (req, res) => {
   } catch (error) {
     console.error('Get expense error:', error);
     res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+exports.getExpensesByDateRange = async (req, res) => {
+  try {
+    const { start, end } = req.query; 
+    if (!start || !end) {
+      return res.status(400).json({ 
+        message: 'Both start and end date parameters are required' 
+      });
+    }
+ 
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(start) || !dateRegex.test(end)) {
+      return res.status(400).json({ 
+        message: 'Dates must be in YYYY-MM-DD format' 
+      });
+    }
+ 
+    if (new Date(start) > new Date(end)) {
+      return res.status(400).json({ 
+        message: 'Start date must be before or equal to end date' 
+      });
+    }
+
+    const expenses = await getExpensesByDateRange(start, end);
+    
+    res.json({
+      success: true,
+      count: expenses.length,
+      data: expenses
+    });
+  } catch (error) {
+    console.error('Get expenses by date range error:', error);
+    res.status(500).json({ 
+      message: 'Internal server error',
+      error: error.message 
+    });
   }
 };
