@@ -30,7 +30,7 @@ BEGIN TRY
         Date DATE NOT NULL,
         TaxRate FLOAT NOT NULL,
         CreatedAt DATETIME DEFAULT GETDATE()
-        -- Add FK to Customers if needed
+        -- MAY BE FK to Customers if needed
     );
  
     CREATE TABLE InvoiceItems (
