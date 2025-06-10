@@ -52,4 +52,34 @@ async function getVendorById(id) {
   }
 }
 
-module.exports = { getAllVendors, getVendorById };
+async function createVendor({ name, contactEmail, phone }) {
+  try {
+    const pool = await sql.connect(config);
+    
+    const result = await pool.request()
+      .input('name', sql.NVarChar, name)
+      .input('contactEmail', sql.NVarChar, contactEmail || null)
+      .input('phone', sql.NVarChar, phone || null)
+      .query(`
+        INSERT INTO Vendors (Name, ContactEmail, Phone)
+        VALUES (@name, @contactEmail, @phone);
+        SELECT SCOPE_IDENTITY() AS id;
+      `);
+
+    pool.close();
+    
+    return {
+      id: parseInt(result.recordset[0].id),
+      name,
+      contactEmail,
+      phone
+    };
+  } catch (error) {
+    if (error.number === 2627) { // SQL server unique constraint violation
+      throw new Error('Vendor with this name already exists');
+    }
+    throw error;
+  }
+}
+
+module.exports = { getAllVendors, getVendorById, createVendor };
