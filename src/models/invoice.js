@@ -162,7 +162,7 @@ exports.updateInvoiceById = async (invoiceId, { customer_id, date, tax_rate, ite
 };
 
 exports.deleteInvoiceById = async (id) => {
-  const pool = await poolPromise; 
+   const pool = await sql.connect(config);
   const invoiceResult = await pool.request()
     .input('id', sql.Int, id)
     .query('SELECT Id FROM Invoices WHERE Id = @id');
