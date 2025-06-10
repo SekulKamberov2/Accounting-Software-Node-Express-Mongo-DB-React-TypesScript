@@ -303,7 +303,6 @@ VALUES
 (9, 'Monthly Consulting', 9, 115.00);
 
 # Contents:
-
 1.Authentication
 2.User Management
 3.Invoicing
