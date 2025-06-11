@@ -22,7 +22,7 @@ const { findByEmail, comparePassword, createUser, findUserByRefreshToken, update
     }
  
     const accessToken = jwt.sign(
-      { id: user.Id, email: user.Email, role: user.Role },
+      { id: user.Id, email: user.Email, role: user.Role, picture: user.Picture },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
     );
@@ -46,9 +46,10 @@ const { findByEmail, comparePassword, createUser, findUserByRefreshToken, update
         name: user.Name,
         email: user.Email,
         role: user.Role,
-        createdAt: user.createdAt
+        picture: user.Picture,
+        createdAt: user.CreatedAt
       }
-    });
+    }); 
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ message: 'Internal server error' });

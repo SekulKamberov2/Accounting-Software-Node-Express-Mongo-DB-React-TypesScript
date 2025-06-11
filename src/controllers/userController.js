@@ -3,9 +3,9 @@ const { createUser: createUserModel, fetchAllUsers, fetchUserById, findByEmail }
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await fetchAllUsers(); 
-    const sanitizedUsers = users.map(({ PasswordHash, RefreshToken, RefreshTokenExpiry, ...rest }) => rest);
-
-    res.json(sanitizedUsers);
+    const sanitized = users.map(({ PasswordHash, RefreshToken, RefreshTokenExpiry, ...rest }) => rest);
+ 
+    res.json(sanitized); 
   } catch (error) {
     console.error('Get all users error:', error);
     res.status(500).json({ message: 'Internal server error' });

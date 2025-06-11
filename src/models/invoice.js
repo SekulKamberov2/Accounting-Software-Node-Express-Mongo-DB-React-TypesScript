@@ -48,9 +48,18 @@ exports.getAllInvoices = async () => {
     const pool = await sql.connect(config);
  
     const invoiceResult = await pool.request().query(`
-      SELECT Id, CustomerId, Date, TaxRate
-      FROM Invoices
-      ORDER BY Date DESC
+      SELECT 
+        i.Id, 
+        i.CustomerId, 
+        i.Date, 
+        i.TaxRate, 
+        i.CreatedAt,
+        u.Name AS CustomerName,
+        u.Email AS CustomerEmail,
+        u.Picture AS CustomerPicture
+      FROM Invoices i
+      INNER JOIN Users u ON i.CustomerId = u.Id
+      ORDER BY i.Date DESC
     `);
 
     const invoices = invoiceResult.recordset;
@@ -78,6 +87,7 @@ exports.getAllInvoices = async () => {
     throw error;
   }
 };
+
 
 exports.getInvoiceById = async (invoiceId) => {
   try {

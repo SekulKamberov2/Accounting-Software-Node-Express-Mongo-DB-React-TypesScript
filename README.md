@@ -21,7 +21,8 @@ BEGIN TRY
         Role NVARCHAR(50) NOT NULL, -- e.g., admin, accountant
         RefreshToken NVARCHAR(MAX) NULL,
         RefreshTokenExpiry DATETIME NULL,
-        CreatedAt DATETIME DEFAULT GETDATE()
+        CreatedAt DATETIME DEFAULT GETDATE(),
+        Picture NVARCHAR(MAX) NULL;
     );
  
     CREATE TABLE Invoices (

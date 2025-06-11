@@ -8,8 +8,8 @@ async function findByEmail(email) {
     
     const result = await pool.request()
       .input('email', sql.NVarChar, email)
-      .query('SELECT Id, Name, Email, PasswordHash, Role FROM Users WHERE Email = @email');
-
+      .query('SELECT Id, Name, Email, PasswordHash, Role, Picture FROM Users WHERE Email = @email');
+console.log(result);
     pool.close();
 
     if (result.recordset.length === 0) return null;
@@ -65,7 +65,7 @@ async function updateRefreshToken(userId, token, expiry) {
 async function fetchAllUsers() {
   const pool = await sql.connect(config);
   const result = await pool.request().query(`
-    SELECT Id, Name, Email, Role, CreatedAt
+    SELECT Id, Name, Email, Role, Picture, CreatedAt
     FROM Users
   `);
   return result.recordset;
