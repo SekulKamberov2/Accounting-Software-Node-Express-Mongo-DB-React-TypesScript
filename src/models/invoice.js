@@ -92,13 +92,22 @@ exports.getAllInvoices = async () => {
 exports.getInvoiceById = async (invoiceId) => {
   try {
     const pool = await sql.connect(config);
- 
+
+    // Join with Users table to fetch customer info
     const invoiceResult = await pool.request()
       .input('InvoiceId', sql.Int, invoiceId)
       .query(`
-        SELECT Id, CustomerId, Date, TaxRate
-        FROM Invoices
-        WHERE Id = @InvoiceId
+        SELECT 
+          i.Id, 
+          i.CustomerId, 
+          i.Date, 
+          i.TaxRate,
+          u.Name AS CustomerName,
+          u.Email AS CustomerEmail,
+          u.Picture AS CustomerPicture
+        FROM Invoices i
+        INNER JOIN Users u ON i.CustomerId = u.Id
+        WHERE i.Id = @InvoiceId
       `);
 
     if (invoiceResult.recordset.length === 0) {
@@ -106,7 +115,8 @@ exports.getInvoiceById = async (invoiceId) => {
     }
 
     const invoice = invoiceResult.recordset[0];
- 
+
+    // Fetch invoice items
     const itemResult = await pool.request()
       .input('InvoiceId', sql.Int, invoiceId)
       .query(`
@@ -114,7 +124,7 @@ exports.getInvoiceById = async (invoiceId) => {
         FROM InvoiceItems
         WHERE InvoiceId = @InvoiceId
       `);
- 
+
     invoice.items = itemResult.recordset.map(item => ({
       ...item,
       Amount: item.Quantity * item.UnitPrice
@@ -126,6 +136,7 @@ exports.getInvoiceById = async (invoiceId) => {
     throw error;
   }
 };
+
 
 exports.updateInvoiceById = async (invoiceId, { customer_id, date, tax_rate, items }) => {
   const pool = await sql.connect(config);

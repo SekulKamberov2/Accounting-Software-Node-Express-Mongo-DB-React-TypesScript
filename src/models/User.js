@@ -9,7 +9,7 @@ async function findByEmail(email) {
     const result = await pool.request()
       .input('email', sql.NVarChar, email)
       .query('SELECT Id, Name, Email, PasswordHash, Role, Picture FROM Users WHERE Email = @email');
-console.log(result);
+ 
     pool.close();
 
     if (result.recordset.length === 0) return null;
