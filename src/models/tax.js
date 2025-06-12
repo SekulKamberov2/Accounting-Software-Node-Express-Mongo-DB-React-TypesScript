@@ -60,4 +60,42 @@ async function getTaxById(id) {
   }
 }
 
-module.exports = { createTax, getAllTaxes, getTaxById };
+async function updateTax({ id, name, rate }) {
+  try {
+    const pool = await sql.connect(config);
+
+    await pool.request()
+      .input('id', sql.Int, id)
+      .input('name', sql.NVarChar, name)
+      .input('rate', sql.Float, rate)
+      .query(`
+        UPDATE Taxes
+        SET Name = @name,
+            Rate = @rate
+        WHERE Id = @id
+      `);
+
+    pool.close();
+  } catch (error) {
+    if (error.number === 2627) { //unique constraint violation
+      throw new Error('Tax with this name already exists');
+    }
+    throw error;
+  }
+}
+ 
+async function deleteTax(id) {
+  try {
+    const pool = await sql.connect(config);
+
+    await pool.request()
+      .input('id', sql.Int, id)
+      .query(`DELETE FROM Taxes WHERE Id = @id`);
+
+    pool.close();
+  } catch (error) {
+    throw error;
+  }
+}
+
+module.exports = { createTax, getAllTaxes, getTaxById, updateTax, deleteTax };

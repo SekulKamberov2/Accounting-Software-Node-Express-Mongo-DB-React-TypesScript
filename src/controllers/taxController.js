@@ -1,4 +1,4 @@
-const { createTax, getAllTaxes, getTaxById } = require('../models/tax');
+const { createTax, getAllTaxes, getTaxById, updateTax, deleteTax } = require('../models/tax');
 
 exports.createTax = async (req, res) => {
   try {
@@ -79,5 +79,73 @@ exports.getTax = async (req, res) => {
   } catch (error) {
     console.error('Get tax error:', error);
     res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+exports.updateTax = async (req, res) => {
+  try {
+    const taxId = parseInt(req.params.id, 10);
+    if (isNaN(taxId)) {
+      return res.status(400).json({ message: 'Invalid tax ID' });
+    }
+
+    const { name, rate } = req.body;
+
+    if (!name || rate === undefined) {
+      return res.status(400).json({ 
+        message: 'Both name and rate are required' 
+      });
+    }
+
+    const rateNum = parseFloat(rate);
+    if (isNaN(rateNum) || rateNum < 0 || rateNum > 1) {
+      return res.status(400).json({ 
+        message: 'Rate must be a number between 0 and 1' 
+      });
+    }
+ 
+    const existingTax = await getTaxById(taxId);
+    if (!existingTax) {
+      return res.status(404).json({ message: 'Tax not found' });
+    }
+
+    await updateTax({ id: taxId, name, rate: rateNum });
+
+    res.json({
+      success: true,
+      message: 'Tax updated successfully'
+    });
+  } catch (error) {
+    console.error('Update tax error:', error);
+
+    if (error.message.includes('already exists')) {
+      return res.status(409).json({ message: error.message });
+    }
+
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+ 
+exports.deleteTax = async (req, res) => {
+  try {
+    const taxId = parseInt(req.params.id, 10);
+    if (isNaN(taxId)) {
+      return res.status(400).json({ message: 'Invalid tax ID' });
+    }
+ 
+    const existingTax = await getTaxById(taxId);
+    if (!existingTax) {
+      return res.status(404).json({ message: 'Tax not found' });
+    }
+
+    await deleteTax(taxId);
+
+    res.json({
+      success: true,
+      message: 'Tax deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete tax error:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
