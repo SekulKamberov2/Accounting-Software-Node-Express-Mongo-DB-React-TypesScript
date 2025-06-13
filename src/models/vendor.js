@@ -82,4 +82,52 @@ async function createVendor({ name, contactEmail, phone }) {
   }
 }
 
-module.exports = { getAllVendors, getVendorById, createVendor };
+async function updateVendor(id, { name, contactEmail, phone }) {
+  try {
+    const pool = await sql.connect(config);
+
+    const result = await pool.request()
+      .input('id', sql.Int, id)
+      .input('name', sql.NVarChar, name)
+      .input('contactEmail', sql.NVarChar, contactEmail || null)
+      .input('phone', sql.NVarChar, phone || null)
+      .query(`
+        UPDATE Vendors
+        SET 
+          Name = @name,
+          ContactEmail = @contactEmail,
+          Phone = @phone
+        WHERE Id = @id;
+        
+        SELECT 
+          Id, Name, ContactEmail, Phone 
+        FROM Vendors 
+        WHERE Id = @id;
+      `);
+
+    pool.close();
+
+    return result.recordset[0] || null;
+  } catch (error) {
+    if (error.number === 2627) {
+      throw new Error('Vendor with this name already exists');
+    }
+    throw error;
+  }
+};
+
+async function deleteVendor(id) {
+  try {
+    const pool = await sql.connect(config); 
+    const result = await pool.request()
+      .input('id', sql.Int, id)
+      .query(`DELETE FROM Vendors WHERE Id = @id;`); 
+    pool.close(); 
+    return result.rowsAffected[0] > 0;
+  } catch (error) {
+      throw error;
+  }
+};
+
+
+module.exports = { getAllVendors, getVendorById, createVendor, updateVendor, deleteVendor };
