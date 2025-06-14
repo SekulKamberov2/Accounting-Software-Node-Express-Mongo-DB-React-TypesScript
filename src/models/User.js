@@ -24,20 +24,40 @@ async function comparePassword(inputPassword, hashedPassword) {
   return await bcrypt.compare(inputPassword, hashedPassword);
 }
  
-async function createUser({ name, email, passwordHash, role }) {
+async function createUser({ name, email, passwordHash, role, picture = null }) {
   const pool = await sql.connect(config);
-  await pool
-    .request()
+  await pool.request()
     .input('name', sql.NVarChar, name)
     .input('email', sql.NVarChar, email)
     .input('passwordHash', sql.NVarChar, passwordHash)
     .input('role', sql.NVarChar, role)
+    .input('picture', sql.NVarChar, picture)
     .query(`
-      INSERT INTO Users (Name, Email, PasswordHash, Role)
-      VALUES (@name, @email, @passwordHash, @role)
+      INSERT INTO Users (Name, Email, PasswordHash, Role, Picture)
+      VALUES (@name, @email, @passwordHash, @role, @picture)
     `);
-  pool.close();
 }
+
+async function updateUser(id, { name, email, role, picture }) {
+  const pool = await sql.connect(config);
+
+  await pool.request()
+    .input('id', sql.Int, id)
+    .input('name', sql.NVarChar, name)
+    .input('email', sql.NVarChar, email)
+    .input('role', sql.NVarChar, role)
+    .input('picture', sql.NVarChar, picture)
+    .query(`
+      UPDATE Users
+      SET Name = @name,
+          Email = @email,
+          Role = @role,
+          Picture = @picture
+      WHERE Id = @id
+    `);
+}
+
+
 async function findUserByRefreshToken(token) {
   const pool = await sql.connect(config);
   const result = await pool
@@ -83,12 +103,20 @@ async function fetchUserById(userId) {
     `); 
   return result.recordset[0] || null;
 };
- 
+
+async function deleteUser(id) {
+  const pool = await sql.connect(config);
+  await pool.request()
+    .input('id', sql.Int, id)
+    .query('DELETE FROM Users WHERE Id = @id');
+}
 
 module.exports = { 
     findByEmail, 
     comparePassword, 
     createUser, 
+    updateUser,
+    deleteUser,
     findUserByRefreshToken, 
     updateRefreshToken, 
     fetchAllUsers,

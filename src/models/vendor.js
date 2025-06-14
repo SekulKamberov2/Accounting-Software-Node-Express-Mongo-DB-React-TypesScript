@@ -17,7 +17,7 @@ async function getAllVendors() {
         FROM Vendors
         ORDER BY Name
       `);
-    
+   
     pool.close();
     
     return result.recordset;

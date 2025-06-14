@@ -115,8 +115,7 @@ exports.getInvoiceById = async (invoiceId) => {
     }
 
     const invoice = invoiceResult.recordset[0];
-
-    // Fetch invoice items
+ 
     const itemResult = await pool.request()
       .input('InvoiceId', sql.Int, invoiceId)
       .query(`
@@ -138,18 +137,18 @@ exports.getInvoiceById = async (invoiceId) => {
 };
 
 
-exports.updateInvoiceById = async (invoiceId, { customer_id, date, tax_rate, items }) => {
+exports.updateInvoiceById = async (invoiceId, { CustomerId, Date, TaxRate, items }) => {
   const pool = await sql.connect(config);
   const transaction = new sql.Transaction(pool);
-
+  console.log(invoiceId, CustomerId, Date, TaxRate, items);
   try {
     await transaction.begin();
  
     await transaction.request()
       .input('InvoiceId', sql.Int, invoiceId)
-      .input('CustomerId', sql.Int, customer_id)
-      .input('Date', sql.Date, date)
-      .input('TaxRate', sql.Float, tax_rate)
+      .input('CustomerId', sql.Int, CustomerId)
+      .input('Date', sql.Date, Date)
+      .input('TaxRate', sql.Float, TaxRate)
       .query(`
         UPDATE Invoices
         SET CustomerId = @CustomerId,
