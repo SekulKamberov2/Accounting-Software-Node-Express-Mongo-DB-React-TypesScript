@@ -4,7 +4,7 @@ const { createPayment, listPayments, updatePayment, deletePayment } = require('.
 
 router.post('/', createPayment);
 router.get('/', listPayments);
-router.put('/', updatePayment);
-router.delete('/', deletePayment);
+router.put('/:id', updatePayment);
+router.delete('/:id', deletePayment);
 
 module.exports = router;

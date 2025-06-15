@@ -27,6 +27,7 @@ exports.getAllPayments = async () => {
 
 exports.updatePayment = async ({ id, invoice_id, amount, date, method }) => {
   try {
+    console.log(id, invoice_id, amount, date, method)
     const pool = await sql.connect(config);
     await pool.request()
       .input('Id', sql.Int, id)
