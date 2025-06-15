@@ -89,11 +89,10 @@ exports.getAllInvoices = async () => {
 };
 
 
-exports.getInvoiceById = async (invoiceId) => {
+exports.getInvoice = async (invoiceId) => {
   try {
     const pool = await sql.connect(config);
 
-    // Join with Users table to fetch customer info
     const invoiceResult = await pool.request()
       .input('InvoiceId', sql.Int, invoiceId)
       .query(`
@@ -136,7 +135,7 @@ exports.getInvoiceById = async (invoiceId) => {
   }
 };
  
-exports.updateInvoiceById = async (Id, { CustomerId, Date, TaxRate, items }) => {
+exports.updateInvoice = async (Id, { CustomerId, Date, TaxRate, items }) => {
   const pool = await sql.connect(config);
   const transaction = new sql.Transaction(pool);
   console.log(Id, CustomerId, Date, TaxRate, items);
@@ -180,7 +179,7 @@ exports.updateInvoiceById = async (Id, { CustomerId, Date, TaxRate, items }) => 
   }
 };
 
-exports.deleteInvoiceById = async (id) => {
+exports.deleteInvoice = async (id) => {
    const pool = await sql.connect(config);
   const invoiceResult = await pool.request()
     .input('id', sql.Int, id)

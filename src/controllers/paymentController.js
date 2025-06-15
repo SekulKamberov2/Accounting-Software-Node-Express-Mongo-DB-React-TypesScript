@@ -37,7 +37,7 @@ exports.updatePayment = async (req, res) => {
     }
 
     const result = await updatePayment(id, { invoice_id, amount, date, method });
-
+    
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Payment not found.' });
     }

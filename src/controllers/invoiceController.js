@@ -1,4 +1,4 @@
-const { createInvoice , getAllInvoices, getInvoiceById, updateInvoiceById, deleteInvoiceById    } = require('../models/invoice');
+const { createInvoice , getAllInvoices, getInvoiceById, updateInvoice, deleteInvoice    } = require('../models/invoice');
 
 exports.createInvoice = async (req, res) => {
   try {
@@ -30,14 +30,14 @@ exports.listInvoices = async (req, res) => {
   }
 };
 
- exports.getInvoiceById = async (req, res) => {
+ exports.getInvoice = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
       return res.status(400).json({ message: 'Invalid invoice ID' });
     }
 
-    const invoice = await getInvoiceById(id);
+    const invoice = await getInvoice(id);
     if (!invoice) {
       return res.status(404).json({ message: 'Invoice not found' });
     }
@@ -62,7 +62,7 @@ exports.updateInvoice = async (req, res) => {
       return res.status(400).json({ message: 'Missing required invoice fields.' });
     }
 
-    await updateInvoiceById(Id, { CustomerId, Date, TaxRate, items });
+    await updateInvoice(Id, { CustomerId, Date, TaxRate, items });
 
     res.json({ message: 'Invoice updated successfully.' });
   } catch (error) {
@@ -78,7 +78,7 @@ exports.deleteInvoice = async (req, res) => {
       return res.status(400).json({ message: 'Invalid invoice ID' });
     }
 
-    const deleted = await deleteInvoiceById(id); 
+    const deleted = await deleteInvoice(id); 
     if (!deleted) {
       return res.status(404).json({ message: 'Invoice not found' });
     }
