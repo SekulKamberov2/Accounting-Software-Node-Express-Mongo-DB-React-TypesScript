@@ -75,7 +75,7 @@ exports.updateEntry = async (req, res) => {
   try {
     const entryId = parseInt(req.params.id, 10);
     const { date, description, entries } = req.body;
-
+  
     if (isNaN(entryId)) {
       return res.status(400).json({ message: 'Invalid journal entry ID' });
     }

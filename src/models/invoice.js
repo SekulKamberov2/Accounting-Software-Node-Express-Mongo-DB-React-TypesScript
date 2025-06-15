@@ -135,17 +135,16 @@ exports.getInvoiceById = async (invoiceId) => {
     throw error;
   }
 };
-
-
-exports.updateInvoiceById = async (invoiceId, { CustomerId, Date, TaxRate, items }) => {
+ 
+exports.updateInvoiceById = async (Id, { CustomerId, Date, TaxRate, items }) => {
   const pool = await sql.connect(config);
   const transaction = new sql.Transaction(pool);
-  console.log(invoiceId, CustomerId, Date, TaxRate, items);
+  console.log(Id, CustomerId, Date, TaxRate, items);
   try {
     await transaction.begin();
  
     await transaction.request()
-      .input('InvoiceId', sql.Int, invoiceId)
+      .input('Id', sql.Int, Id)
       .input('CustomerId', sql.Int, CustomerId)
       .input('Date', sql.Date, Date)
       .input('TaxRate', sql.Float, TaxRate)
@@ -154,19 +153,19 @@ exports.updateInvoiceById = async (invoiceId, { CustomerId, Date, TaxRate, items
         SET CustomerId = @CustomerId,
             Date = @Date,
             TaxRate = @TaxRate
-        WHERE Id = @InvoiceId
+        WHERE Id = @Id
       `);
  
     await transaction.request()
-      .input('InvoiceId', sql.Int, invoiceId)
-      .query('DELETE FROM InvoiceItems WHERE InvoiceId = @InvoiceId');
+      .input('Id', sql.Int, Id)
+      .query('DELETE FROM InvoiceItems WHERE InvoiceId = @Id');
  
     for (const item of items) {
       await transaction.request()
-        .input('InvoiceId', sql.Int, invoiceId)
-        .input('Description', sql.NVarChar, item.description)
-        .input('Quantity', sql.Int, item.quantity)
-        .input('UnitPrice', sql.Float, item.unit_price)
+        .input('InvoiceId', sql.Int, Id)
+        .input('Description', sql.NVarChar, item.Description)
+        .input('Quantity', sql.Int, item.Quantity)
+        .input('UnitPrice', sql.Float, item.UnitPrice)
         .query(`
           INSERT INTO InvoiceItems (InvoiceId, Description, Quantity, UnitPrice)
           VALUES (@InvoiceId, @Description, @Quantity, @UnitPrice)

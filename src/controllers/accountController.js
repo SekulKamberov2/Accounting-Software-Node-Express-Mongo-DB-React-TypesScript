@@ -46,13 +46,13 @@ exports.getAccountById = async (req, res) => {
 exports.updateAccount = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, type, code } = req.body;
-
-    if (!name || !type || !code) {
+    const { Name, Type, Code } = req.body;
+    console.log(Name, Type, Code);
+    if (!Name || !Type || !Code) {
       return res.status(400).json({ message: 'Missing required account fields.' });
     }
 
-    await updateAccount({ id: parseInt(id), name, type, code });
+    await updateAccount({ Id: parseInt(id), Name, Type, Code });
 
     res.json({ message: 'Account updated successfully.' });
   } catch (error) {

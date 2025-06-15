@@ -35,13 +35,14 @@ exports.getAccountById = async (id) => {
     return result.recordset[0];   
 };
 
-exports.updateAccount = async ({ id, name, type, code }) => {
+exports.updateAccount = async ({ Id, Name, Type, Code }) => {
+    console.log(Id, Name, Type, Code);
     const pool = await sql.connect(config);
     await pool.request()
-        .input('Id', sql.Int, id)
-        .input('Name', sql.NVarChar(100), name)
-        .input('Type', sql.NVarChar(50), type)
-        .input('Code', sql.NVarChar(20), code)
+        .input('Id', sql.Int, Id)
+        .input('Name', sql.NVarChar(100), Name)
+        .input('Type', sql.NVarChar(50), Type)
+        .input('Code', sql.NVarChar(20), Code)
         .query(`
             UPDATE Accounts
             SET Name = @Name,

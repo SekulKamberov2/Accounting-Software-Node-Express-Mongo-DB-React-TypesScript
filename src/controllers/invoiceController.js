@@ -56,13 +56,13 @@ exports.updateInvoice = async (req, res) => {
       return res.status(400).json({ message: 'Invalid invoice ID' });
     }
 
-    const { customer_id, date, tax_rate, items } = req.body;
+    const { Id, CustomerId, Date, TaxRate, items } = req.body;
 
-    if (!customer_id || !date || !items || !Array.isArray(items)) {
+    if (!CustomerId || !Date || !items || !Array.isArray(items)) {
       return res.status(400).json({ message: 'Missing required invoice fields.' });
     }
 
-    await updateInvoiceById(id, { customer_id, date, tax_rate, items });
+    await updateInvoiceById(Id, { CustomerId, Date, TaxRate, items });
 
     res.json({ message: 'Invoice updated successfully.' });
   } catch (error) {
