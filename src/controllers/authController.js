@@ -58,9 +58,8 @@ const { findByEmail, comparePassword, createUser, findUserByRefreshToken, update
 
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, role, picture } = req.body;
-
-    if (!name || !email || !password || !role) {
+    const { name, email, password, role, picture } = req.body; 
+    if (!name || !email || !password || !role || !picture) {
       return res.status(400).json({ message: 'All fields are required.' });
     }
  

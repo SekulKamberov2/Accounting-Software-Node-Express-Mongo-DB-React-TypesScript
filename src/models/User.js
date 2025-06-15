@@ -24,7 +24,7 @@ async function comparePassword(inputPassword, hashedPassword) {
   return await bcrypt.compare(inputPassword, hashedPassword);
 }
  
-async function createUser({ name, email, passwordHash, role, picture = null }) {
+async function createUser({ name, email, passwordHash, role, picture }) {
   const pool = await sql.connect(config);
   await pool.request()
     .input('name', sql.NVarChar, name)
