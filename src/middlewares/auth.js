@@ -1,8 +1,11 @@
-const jwt = require('jsonwebtoken');
-
-const JWT_SECRET = process.env.JWT_SECRET || 'yourSecretKey';  
+const jwt = require('jsonwebtoken'); 
+const JWT_SECRET = process.env.JWT_SECRET || 'Sechkobechkoalabala';  //yourSecretKey
 
 exports.verifyToken = (req, res, next) => {
+  if (req.method === 'POST' && req.path === '/register') {
+    return next();  
+  }
+ 
   const authHeader = req.headers.authorization;
  
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
