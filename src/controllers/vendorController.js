@@ -89,19 +89,19 @@ exports.updateVendor = async (req, res) => {
       return res.status(400).json({ message: 'Invalid vendor ID' });
     }
 
-    const { name, contact_email, phone } = req.body;
+    const { name, contactEmail, phone } = req.body;
 
     if (!name) {
       return res.status(400).json({ message: 'Vendor name is required' });
     }
 
-    if (contact_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact_email)) {
+    if (contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
       return res.status(400).json({ message: 'Invalid email format' });
     }
 
     const updatedVendor = await updateVendor(vendorId, {
       name,
-      contactEmail: contact_email,
+      contactEmail: contactEmail,
       phone
     });
 
